@@ -30,8 +30,8 @@ plt.imshow(image, cmap='gray')
 plt.title("Original Image with undistorted Points")
 plt.show()
 
-cx, cy = image_width / 2, image_height / 2
-k1, p1, p2, s1, s2 = -7.7, 0, 0, 0, 0
+cx, cy = image_width / 2 - 6, image_height / 2 - 38
+k1, p1, p2, s1, s2 = -3.7, 0.002, 0.005, 0.002, 0.001
 distorted_points = distort_points(dist_params=(
     cx, cy, k1, p1, p2, s1, s2), undistorted_points=src_points)
 

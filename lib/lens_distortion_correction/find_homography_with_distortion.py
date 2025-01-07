@@ -127,15 +127,17 @@ def find_homography_with_distortion(src_points: npt.NDArray, dest_points: npt.ND
 
     m_linear = (c_x, c_y, m_sl[0][0], m_sl[1][0], m_sl[2][0], m_sl[3][0], m_sl[4][0])
 
-    def cost_function(dist_parameters, src_points, dest_points, H):
+    def cost_function(params, src_points, dest_points):
+        dist_parameters = params[:7]
+        H = params[7:].reshape(3, 3)
         distorted_points_opt = undistort_points(dist_parameters, dest_points)
         source_points_transformed = transform_points_homography(src_points, H)
-        residuals = np.zeros(shape=(len(dest_points)))
-        for i in range(len(residuals)):
-            residuals[i] = (distorted_points_opt[i][0] - source_points_transformed[i][0]) ** 2 + (distorted_points_opt[i][1] - source_points_transformed[i][1]) ** 2
-        return residuals
+        residuals = distorted_points_opt - source_points_transformed
+        return residuals.flatten()
 
-    m_nonlinear = scipy.optimize.least_squares(cost_function, np.array(m_linear), args=(src_points, dest_points, H), method='lm').x
+    optimized_params  = scipy.optimize.least_squares(cost_function, np.concatenate([np.array(m_linear), H.flatten()]), args=(src_points, dest_points), method='lm').x
+    m_nonlinear = optimized_params[:7]
+    H = optimized_params[7:].reshape(3, 3)
 
     F_nonlinear = mean_squared_transfer_error(undistort_points(m_nonlinear, dest_points), transform_points_homography(src_points, H))
 
