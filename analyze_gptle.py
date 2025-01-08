@@ -4,11 +4,15 @@ import numpy as np
 
 from lib.ground_plane_target_location_error.gptle_from_video import gptle_from_video
 
+"""
+This code defines the entry for a CLI program to analyse GPTD.
+"""
+
 # Define all ArUco markers, that are in the calibration patter by their id, the absolute position of their center, and their width (size)
-CALIBRATION_PATTERN = {1: {"pos": {"x": 1000, "y": 1000}, "width": 2000},
-                       2: {"pos": {"x": 1000, "y": 3500}, "width": 2000},
-                       3: {"pos": {"x": 3500, "y": 3500}, "width": 2000},
-                       4: {"pos": {"x": 3500, "y": 1000}, "width": 2000}}
+CALIBRATION_PATTERN = {1: {"pos": {"x": -800, "y": -800}, "width": 1000},
+                       2: {"pos": {"x": -800, "y": 800}, "width": 1000},
+                       3: {"pos": {"x": 800, "y": 800}, "width": 1000},
+                       4: {"pos": {"x": 800, "y": -800}, "width": 1000}}
 
 
 def main():
