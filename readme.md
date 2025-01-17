@@ -7,8 +7,8 @@ use `analyze_gptle.py`, e.g.:
 $ python analze_gptle.py "path/to/test/input/video01.mkv [-tx <target x location> -ty <target y location> -m <mode>]"
 ```
 Modes:
-1: Draw GPTLE path over all frames (trace)
-2: Draw each individual GPTLE vector in the coresponding frame
+1. Draw GPTLE path over all frames (trace)
+2. Draw each individual GPTLE vector in the coresponding frame
 
 ## Lens Distortion Correction
 To test with synthetic data, execute:
