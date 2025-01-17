@@ -4,7 +4,7 @@ Accompanying code repository for the thesis.
 ## Determining Ground Plane Target Location Error
 use `analyze_gptle.py`, e.g.:
 ```commandline
-$ python analze_gptle.py "path/to/test/input/video01.mkv [-tx <target x location> -ty <target y location> -m <mode>]"
+$ python analze_gptle.py "path/to/test/input/video01.mkv" [-tx <target x location> -ty <target y location> -m <mode>]
 ```
 Modes:
 1. Draw GPTLE path over all frames (trace)
