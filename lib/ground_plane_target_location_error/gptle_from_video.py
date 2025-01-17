@@ -14,6 +14,9 @@ class GptleDetectorOutputMode(Enum):
 
 
 def aruco_calculate_global_coordinates(ids, ids_global_measurements):
+    """
+    Auxiliary function for sorting and matching source and destination points by the ids of detected ArUco markers
+    """
     obj_points = []
     for id in ids:
         center_x = ids_global_measurements[id[0]]["pos"]["x"]
@@ -32,7 +35,8 @@ def aruco_calculate_global_coordinates(ids, ids_global_measurements):
 
 def gptle_from_video(path_to_input_video: str, aruco_dict: int, calibration_pattern_definition: dict, output_path="./output", target_coordinates=None, output_mode=GptleDetectorOutputMode.PATH) -> None:
     """
-    TODO -currently only .mkv supported
+    Analysis the ground plane target location error for a given video. Write an output video with visualized ground plane
+    target location error.
     :param output_mode:
     :param calibration_pattern_definition:
     :param path_to_input_video:
