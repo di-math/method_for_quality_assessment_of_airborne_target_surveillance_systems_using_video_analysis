@@ -237,3 +237,43 @@ def distort_points(dist_params: tuple, undistorted_points: npt.NDArray) -> npt.N
         distorted_points[i][1] = distorted_points[i][1] + D_y
 
     return distorted_points
+
+
+def create_distortion_map(map_x, map_y, c_x, c_y, k_1, p_1, p_2, s_1, s_2):
+    for y, row in enumerate(map_x):
+        for x, pixel in enumerate(row):
+            x_u = x - c_x
+            y_u = y - c_y
+            r_2 = x_u**2 + y_u **2
+            map_x[y][x] = -1 * ((k_1 * sigma_k_1) * x_u * r_2 + (p_1 * sigma_p_1) * \
+              (3 * x_u ** 2 + y_u ** 2) + 2 * (p_2 * sigma_p_2) * \
+              x_u * y_u + (s_1 * sigma_s_1) * r_2)
+    for y, row in enumerate(map_y):
+        for x, pixel in enumerate(row):
+            x_u = x - c_x
+            y_u = y - c_y
+            r_2 = x_u**2 + y_u **2
+            map_x[y][x] = -1 * ((k_1 * sigma_k_1) * y_u * r_2 + (p_2 * sigma_p_2) * \
+              (x_u ** 2 + 3 * y_u ** 2) + 2 * (p_1 * sigma_p_1) * \
+              x_u * y_u + (s_2 * sigma_s_2) * r_2)
+    return map_x, map_y
+
+
+def create_undistortion_map(map_x, map_y, c_x, c_y, k_1, p_1, p_2, s_1, s_2):
+    for y, row in enumerate(map_x):
+        for x, pixel in enumerate(row):
+            x_u = x - c_x
+            y_u = y - c_y
+            r_2 = x_u**2 + y_u **2
+            map_x[y][x] = -1 * ((k_1 * sigma_k_1) * x_u * r_2 + (p_1 * sigma_p_1) * \
+              (3 * x_u ** 2 + y_u ** 2) + 2 * (p_2 * sigma_p_2) * \
+              x_u * y_u + (s_1 * sigma_s_1) * r_2)
+    for y, row in enumerate(map_y):
+        for x, pixel in enumerate(row):
+            x_u = x - c_x
+            y_u = y - c_y
+            r_2 = x_u**2 + y_u **2
+            map_x[y][x] = -1 * ((k_1 * sigma_k_1) * y_u * r_2 + (p_2 * sigma_p_2) * \
+              (x_u ** 2 + 3 * y_u ** 2) + 2 * (p_1 * sigma_p_1) * \
+              x_u * y_u + (s_2 * sigma_s_2) * r_2)
+    return map_x, map_y

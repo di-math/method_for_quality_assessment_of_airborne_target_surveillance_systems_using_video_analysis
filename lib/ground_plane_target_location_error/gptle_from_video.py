@@ -13,15 +13,21 @@ class GptleDetectorOutputMode(Enum):
     FRAME_GPTLE = 1
 
 
-def aruco_calculate_global_coordinates(ids, ids_global_measurements):
+def aruco_calculate_global_coordinates(ids, ids_global_measurements, corners):
     """
     Auxiliary function for sorting and matching source and destination points by the ids of detected ArUco markers
     """
     obj_points = []
-    for id in ids:
-        center_x = ids_global_measurements[id[0]]["pos"]["x"]
-        center_y = ids_global_measurements[id[0]]["pos"]["y"]
-        marker_width = ids_global_measurements[id[0]]["width"]
+    corners_all = []
+
+    for i, id in enumerate(ids):
+        try:
+            center_x = ids_global_measurements[id[0]]["pos"]["x"]
+            center_y = ids_global_measurements[id[0]]["pos"]["y"]
+            marker_width = ids_global_measurements[id[0]]["width"]
+        except KeyError:
+            print(f"A marker with id {id[0]} was detected but is not defined in 'global_measurements' reference!")
+            continue
         top_left = np.array([center_x - marker_width / 2, center_y + marker_width / 2], np.float32)
         top_right = np.array([center_x + marker_width / 2, center_y + marker_width / 2], np.float32)
         bottom_right = np.array([center_x + marker_width / 2, center_y - marker_width / 2], np.float32)
@@ -30,7 +36,9 @@ def aruco_calculate_global_coordinates(ids, ids_global_measurements):
         obj_points.append(top_right)
         obj_points.append(bottom_right)
         obj_points.append(bottom_left)
-    return np.array(obj_points, np.float32)
+        for corner in corners[i][0]:
+            corners_all.append(corner)
+    return np.array(corners_all, np.float32), np.array(obj_points, np.float32)
 
 
 def gptle_from_video(path_to_input_video: str, aruco_dict: int, calibration_pattern_definition: dict, output_path="./output", target_coordinates=None, output_mode=GptleDetectorOutputMode.PATH) -> None:
@@ -89,12 +97,7 @@ def gptle_from_video(path_to_input_video: str, aruco_dict: int, calibration_patt
         # Detect Aruco-Markers in the frame
         (corners, ids, rejected) = aruco_detector.detectMarkers(frame)
         # Calculate the object-points in global coordinates, so their array indices are the same as their image point correspondences
-        object_points = aruco_calculate_global_coordinates(ids, calibration_pattern_definition)
-        # Reformat the detected corners to an image_points array
-        image_points = []
-        for corner_i in corners:
-            for corner_k in corner_i[0]:
-                image_points.append(corner_k)
+        image_points, object_points = aruco_calculate_global_coordinates(ids, calibration_pattern_definition, corners)
 
         # Estimate homography between image and object points
         H = cv2.findHomography(np.array(image_points), object_points)[0]
